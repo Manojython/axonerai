@@ -3,6 +3,7 @@ use axonai::agent::Agent;
 use axonai::provider::{Provider};
 use std::env;
 use axonai::anthropic::AnthropicProvider;
+use axonai::openai::OpenAIProvider;
 use axonai::groq::GroqProvider;
 use axonai::tool::ToolRegistry;
 use axonai::tools::calculator::Calculator;
@@ -13,13 +14,18 @@ async fn main() -> anyhow::Result<()> {
 
     println!("Starting AxonAI example...");
 
-    let provider_type = env::var("PROVIDER_TYPE").unwrap_or("groq".to_string());
+    let provider_type = env::var("PROVIDER_TYPE").unwrap_or("openai".to_string());
 
     let provider: Box<dyn Provider> = match provider_type.as_str() {
         "anthropic" => {
             let api_key = env::var("ANTHROPIC_API_KEY")
                 .expect("ANTHROPIC_API_KEY environment variable not set");
             Box::new(AnthropicProvider::new(api_key))
+        },
+        "openai" => {
+            let api_key = env::var("OPENAI_API_KEY")
+                .expect("OPENAI_API_KEY environment variable not set");
+            Box::new(OpenAIProvider::new(api_key))
         },
         "groq" | _ => {
             let api_key = env::var("GROQ_API_KEY")

@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use reqwest;
 use scraper::{Html, Selector};
+use std::time::Instant;
 
 
 pub struct WebScrape;
@@ -20,7 +21,7 @@ impl Tool for WebScrape {
 
     fn name(&self) -> String{ "WebScrape".to_string()}
 
-    fn description(&self) -> String{ "This tool takes in the page title and urls and scraps the content of the page and returns pure text".to_string()}
+    fn description(&self) -> String{ "This tool gives the actual content of the page and returns text for which the user has asked".to_string()}
 
     fn input_schema(&self) -> Value {
         json!({
@@ -28,11 +29,13 @@ impl Tool for WebScrape {
             "properties": {
                 "titles": {
                     "type": "array",
-                    "description": "array of titles from the search"
+                    "description": "array of titles from the search",
+                    "items": {"type": "string"}
                 },
                 "links": {
                     "type": "array",
-                    "description": "array of links from the search"
+                    "description": "array of links from the search",
+                    "items": {"type": "string"}
                 }
             },
             "required": ["titles", "links"]
@@ -43,15 +46,17 @@ impl Tool for WebScrape {
         let input: WebScrapeInput = serde_json::from_value(input)
             .map_err(|e| anyhow!("Invalid calculator input: {}", e))?;
 
+        println!("{:?}", input);
         let titles = input.titles;
         let links = input.links;
         let mut search_blob = "Title, WebpageContent".to_string();
+        let web_scr_start = Instant::now();
         for (title, link ) in titles.iter().zip(links.iter()) {
             let content = fetch_content(link.to_string()).await?;
             println!("{}",content);
             search_blob.push_str(&format!("\n{}: {}", title, content));
         }
-
+        println!("Time taken for web scraping: {:?}", web_scr_start.elapsed());
         Ok(search_blob)
 
     }
@@ -66,7 +71,6 @@ async fn parse_html_content(html_body: &str) -> Result<String> {
     let mut content = String::new();
     for element in document.select(&selector) {
         content.push_str(&element.inner_html());
-        println!("Here is the content: {}", &element.inner_html());
     }
     Ok(content)
 }
