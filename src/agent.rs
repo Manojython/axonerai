@@ -2,35 +2,47 @@ use crate::executor::{ToolExecutor, ToolResult};
 use crate::provider::{Message, Provider, StopReason};
 use crate::tool::ToolRegistry;
 use anyhow::Result;
-
+use crate::file_session_manager::FileSessionManager;
+use crate::session::Session;
 
 pub struct Agent {
     provider: Box<dyn Provider>,
     registry: ToolRegistry,
     max_iterations: usize,
-    system_prompt: Option<String>
+    system_prompt: Option<String>,
+    file_session_manager: Option<FileSessionManager>
 }
 
 impl Agent {
-    pub fn new(provider: Box<dyn Provider>, registry: ToolRegistry, system_prompt: Option<String>) -> Self {
+    pub fn new(provider: Box<dyn Provider>, registry: ToolRegistry, system_prompt: Option<String>, file_session_manager: Option<FileSessionManager>) -> Self {
         Self {
             provider,
             registry,
             max_iterations: 10, // Prevent infinite loops
             system_prompt,
+            file_session_manager
         }
     }
 
     /// Run the agent with a user prompt
     pub async fn run(&self, user_prompt: &str) -> Result<String> {
+
+        let mut session = if let Some(ref sm) = self.file_session_manager {
+            if sm.exists() { sm.load()? }
+            else { Session::new(sm.get_session().to_string()) }
+        }
+        else {
+            Session::new("stateless".to_string())
+        };
+
         println!("\n🤖 Agent starting...");
         println!("📝 User: {}", user_prompt);
         println!();
 
-        let mut messages = vec![Message {
+        session.add_message(Message {
             role: "user".to_string(),
             content: user_prompt.to_string(),
-        }];
+        });
 
         let executor = ToolExecutor::new(&self.registry);
         let tools = self.registry.get_all_for_llm();
@@ -41,15 +53,22 @@ impl Agent {
             // Call LLM with current messages and available tools
             let response = self
                 .provider
-                .complete(messages.clone(), Some(tools.clone()), None, self.system_prompt.clone())
+                .complete(session.get_messages().clone(), Some(tools.clone()), None, self.system_prompt.clone())
                 .await?;
 
-            // Check what the LLM wants to do
             match response.stop_reason {
                 StopReason::EndTurn => {
-                    // LLM is done, return final answer
                     if let Some(text) = response.text {
-                        println!("✨ Final answer received");
+                        session.add_message(Message {
+                            role: "assistant".to_string(),
+                            content: text.clone(),
+                        });
+
+                        if let Some(ref sm) = self.file_session_manager {
+                            sm.save(&session)?;
+                        }
+
+                        println!("Response from Agent:");
                         return Ok(text);
                     } else {
                         return Ok("(No response from agent)".to_string());
@@ -71,13 +90,13 @@ impl Agent {
                     let tool_results = executor.execute_all(&response.tool_calls).await?;
 
                     // Add assistant's tool use to messages
-                    messages.push(Message {
+                    session.add_message(Message {
                         role: "assistant".to_string(),
                         content: format_tool_use(&response.tool_calls),
                     });
 
                     // Add tool results to messages
-                    messages.push(Message {
+                    session.add_message(Message {
                         role: "user".to_string(),
                         content: format_tool_results(&tool_results),
                     });
@@ -96,6 +115,9 @@ impl Agent {
             }
         }
 
+        if let Some(ref sm) = self.file_session_manager {
+            sm.save(&session)?;
+        }
         Ok(format!(
             "Agent reached max iterations ({})",
             self.max_iterations

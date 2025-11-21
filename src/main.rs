@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::time::Instant;
 use axonai::agent::Agent;
 use axonai::provider::{Provider};
@@ -8,13 +9,14 @@ use axonai::groq::GroqProvider;
 use axonai::tool::ToolRegistry;
 use axonai::tools::calculator::Calculator;
 use axonai::tools::{WebScrape, WebSearch};
+use axonai::file_session_manager::FileSessionManager;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
 
     println!("Starting AxonAI example...");
 
-    let provider_type = env::var("PROVIDER_TYPE").unwrap_or("openai".to_string());
+    let provider_type = env::var("PROVIDER_TYPE").unwrap_or("groq".to_string());
 
     let provider: Box<dyn Provider> = match provider_type.as_str() {
         "anthropic" => {
@@ -34,14 +36,31 @@ async fn main() -> anyhow::Result<()> {
         },
     };
 
+    /*
+    -------- Tool Registry----------------
+     */
     let mut tools = ToolRegistry::new();
     tools.register(Box::new(Calculator));
     tools.register(Box::new(WebSearch));
     tools.register(Box::new(WebScrape));
     println!("Available tools: {:?}", &tools.list_tools());
+
+    /*
+    ----------Session Manager------------
+     */
+
+    let file_session_manager = FileSessionManager::new("random_session".to_string() , PathBuf::from("../tmp/"))?;
+
+
+    /* Agent Initialize */
     let system_prompt = "You are a helpful assistant, You have several tools at you disposal, \
     do not give information without proper usage of tools, you are smart, but you rely on tools for information".to_string();
-    let agent = Agent::new(provider, tools, Some(system_prompt));
+    let agent = Agent::new(
+        provider,
+        tools,
+        Some(system_prompt),
+        Some(file_session_manager)
+    );
 
 
 
