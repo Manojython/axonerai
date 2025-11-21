@@ -35,8 +35,8 @@ impl Agent {
             Session::new("stateless".to_string())
         };
 
-        println!("\n🤖 Agent starting...");
-        println!("📝 User: {}", user_prompt);
+        
+
         println!();
 
         session.add_message(Message {

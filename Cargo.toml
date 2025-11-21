@@ -12,6 +12,7 @@ anyhow = "1.0"
 async-trait = "0.1"
 env = "1.0.1"
 scraper = "0.24.0"
+uuid = { version = "1.18.1", features = ["v4"] }
 
 
 [dev-dependencies]
