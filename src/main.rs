@@ -1,15 +1,15 @@
 use std::path::PathBuf;
 use std::time::Instant;
-use axonai::agent::Agent;
-use axonai::provider::{Provider};
+use axonerai::agent::Agent;
+use axonerai::provider::{Provider};
 use std::env;
-use axonai::anthropic::AnthropicProvider;
-use axonai::openai::OpenAIProvider;
-use axonai::groq::GroqProvider;
-use axonai::tool::ToolRegistry;
-use axonai::tools::calculator::Calculator;
-use axonai::tools::{WebScrape, WebSearch};
-use axonai::file_session_manager::FileSessionManager;
+use axonerai::anthropic::AnthropicProvider;
+use axonerai::openai::OpenAIProvider;
+use axonerai::groq::GroqProvider;
+use axonerai::tool::ToolRegistry;
+use axonerai::tools::calculator::Calculator;
+use axonerai::tools::{WebScrape, WebSearch};
+use axonerai::file_session_manager::FileSessionManager;
 use uuid::Uuid;
 
 #[tokio::main]
