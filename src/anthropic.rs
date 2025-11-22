@@ -116,7 +116,7 @@ impl Provider for AnthropicProvider {
     }
 }
 
-// Anthropic API response structures
+// Anthropic API response structures - not tested
 #[derive(Debug, Deserialize)]
 struct AnthropicResponse {
     content: Vec<ContentBlock>,

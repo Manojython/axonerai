@@ -23,8 +23,6 @@ impl<'a> ToolExecutor<'a> {
 
         let result = tool.execute(tool_call.input.clone()).await?;
 
-        // println!("  ✅ Tool result: {}", result);
-
         Ok(ToolResult {
             tool_call_id: tool_call.id.clone(),
             tool_name: tool_call.name.clone(),
@@ -33,13 +31,7 @@ impl<'a> ToolExecutor<'a> {
     }
 
     /// Execute multiple tool calls
-    // pub fn execute_all(&self, tool_calls: &[ToolCall]) -> Result<Vec<ToolResult>> {
-    //     tool_calls
-    //         .iter()
-    //         .map(|call| self.execute(call))
-    //         .collect()
-    //
-    // }
+    
     pub async fn execute_all(&self, tool_calls: &[ToolCall]) -> Result<Vec<ToolResult>> {
         let mut results = Vec::new();
         for call in tool_calls {

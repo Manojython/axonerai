@@ -23,20 +23,19 @@ pub struct Message {
     pub content: String,
 }
 
-/// Tool definition following OpenAI/Anthropic function calling spec
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Tool {
     pub name: String,
     pub description: String,
-    pub input_schema: Value,  // JSON schema for the tool's parameters
+    pub input_schema: Value,
 }
 
 /// Unified response from any LLM provider
 #[derive(Debug, Clone)]
 pub struct CompletionResponse {
-    pub text: Option<String>,           // Text response (if any)
-    pub tool_calls: Vec<ToolCall>,      // Tool calls (EMPTY VEC if none, NOT Option)
-    pub stop_reason: StopReason,        // Why it stopped
+    pub text: Option<String>,
+    pub tool_calls: Vec<ToolCall>,
+    pub stop_reason: StopReason,
 }
 
 /// When the model wants to call a tool

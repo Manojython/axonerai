@@ -71,9 +71,6 @@ impl Provider for OpenAIProvider {
             body["tools"] = json!(openai_tools);
         }
 
-        // println!("DEBUG: Sending to OpenAI:");
-
-        // println!("{}", serde_json::to_string_pretty(&tool_clone)?);
 
 
         let response = self
@@ -93,8 +90,6 @@ impl Provider for OpenAIProvider {
         }
 
         let api_response: OpenAIResponse = response.json().await?;
-
-        // println!("DEBUG: OpenAI response: {}", serde_json::to_string_pretty(&api_response)?);
 
 
         let choice = api_response
@@ -116,9 +111,9 @@ impl Provider for OpenAIProvider {
                         input,
                     }
                 })
-                .collect::<Vec<ToolCall>>()  // Type annotation!
+                .collect::<Vec<ToolCall>>()
         } else {
-            vec![]  // Empty vec if no tool calls
+            vec![]
         };
 
         let stop_reason = match choice.finish_reason.as_str() {
@@ -166,5 +161,5 @@ struct OpenAIToolCall {
 #[derive(Debug, Deserialize, Serialize)]
 struct FunctionCall {
     name: String,
-    arguments: String,  // JSON string
+    arguments: String,
 }

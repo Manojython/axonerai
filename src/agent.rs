@@ -35,7 +35,7 @@ impl Agent {
             Session::new("stateless".to_string())
         };
 
-        
+
 
         println!();
 
@@ -47,10 +47,8 @@ impl Agent {
         let executor = ToolExecutor::new(&self.registry);
         let tools = self.registry.get_all_for_llm();
 
-        for iteration in 1..=self.max_iterations {
-            println!("--- Iteration {} ---", iteration);
+        for _iteration in 1..=self.max_iterations {
 
-            // Call LLM with current messages and available tools
             let response = self
                 .provider
                 .complete(session.get_messages().clone(), Some(tools.clone()), None, self.system_prompt.clone())

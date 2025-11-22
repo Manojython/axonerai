@@ -88,21 +88,4 @@ async fn main() -> anyhow::Result<()> {
 
     Ok(())
 
-    // let messages = vec![
-    //     Message{
-    //         role: "user".to_string(),
-    //         content: input.trim().to_string(),
-    //     }
-    // ];
-
-    // let response = provider.complete(messages, Some(tools.get_all_for_llm()), None).await?;
-
-    // if let Some(text) = response.text {
-    //     println!("Response: {}", text);
-    // } else {
-    //     println!("No text response received.");
-    // }
-
-
-    
 }

@@ -72,10 +72,6 @@ impl Provider for GroqProvider {
                 .collect();
             body["tools"] = json!(groq_tools);
         }
-        
-        // println!("DEBUG: Sending to Groq:");
-    
-        // println!("{}", serde_json::to_string_pretty(&tool_clone)?); 
 
 
         let response = self
@@ -118,9 +114,9 @@ impl Provider for GroqProvider {
                         input,
                     }
                 })
-                .collect::<Vec<ToolCall>>()  // Type annotation!
+                .collect::<Vec<ToolCall>>()
         } else {
-            vec![]  // Empty vec if no tool calls
+            vec![]
         };
 
         let stop_reason = match choice.finish_reason.as_str() {
@@ -130,8 +126,6 @@ impl Provider for GroqProvider {
             "content_filter" => StopReason::ContentFilter,
             _ => StopReason::Error,
         };
-        
-        println!("DEBUG: stop_reason: {:?}\n", &stop_reason);
 
         Ok(CompletionResponse {
             text,
@@ -168,5 +162,5 @@ struct GroqToolCall {
 #[derive(Debug, Deserialize, Serialize)]
 struct FunctionCall {
     name: String,
-    arguments: String,  // JSON string
+    arguments: String,
 }
