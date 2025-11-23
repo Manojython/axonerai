@@ -90,11 +90,17 @@ async fn main() -> anyhow::Result<()> {
 
 ## Supported Providers
 
-| Provider | Model Examples                                        |
-|----------|-------------------------------------------------------|
-| **Groq** | `llama-3.3-70b-versatile`, `gpt-oss-20B`              |
-| **Anthropic** | `claude-sonnet-4-20250514`, `claude-3-haiku-20240307` |
-| **OpenAI** | `gpt-4o`, `gpt-4o-mini`                               |
+The Framework is currently hardcoded to use :
+ - groq : `openai/gpt-oss-20b`
+- openai: `gpt-5-mini`
+
+Feel free to modify this in the respective files in the src crate
+
+| Provider | Model Examples                                                                                                |
+|----------|---------------------------------------------------------------------------------------------------------------|
+| **Groq** | `openai/gpt-oss-20b`(currently hardcoded, but can be changed to `llama-3.3-70b-versatile` or something else,) |
+| **Anthropic** | `claude-sonnet-4-20250514`, `claude-3-haiku-20240307`                                                         |
+| **OpenAI** | `gpt-5-mini` (currently hardcoded), `gpt-4o-mini`                                                             |
 
 ```rust
 // Groq (free tier available!)
