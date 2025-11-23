@@ -7,15 +7,12 @@ use axonerai::anthropic::AnthropicProvider;
 use axonerai::openai::OpenAIProvider;
 use axonerai::groq::GroqProvider;
 use axonerai::tool::ToolRegistry;
-use axonerai::tools::calculator::Calculator;
-use axonerai::tools::{WebScrape, WebSearch};
+use axonerai::tools::{WebScrape, WebSearch, Calculator};
 use axonerai::file_session_manager::FileSessionManager;
 use uuid::Uuid;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-
-    println!("Starting AxonAI example...");
 
     let provider_type = env::var("PROVIDER_TYPE").unwrap_or("groq".to_string());
 

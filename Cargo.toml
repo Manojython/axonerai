@@ -2,6 +2,13 @@
 name = "axonerai"
 version = "0.1.0"
 edition = "2024"
+authors = ["Manoj <mnjkshrm@gmail.com>"]
+description = "A type-safe, blazing fast agentic AI framework in Rust"
+license = "MIT"
+repository = "https://github.com/Manojython/axonerai"
+readme = "README.md"
+keywords = ["ai", "agents", "llm", "rust", "framework"]
+categories = ["development-tools", "api-bindings"]
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
