@@ -1,6 +1,6 @@
 [package]
 name = "axonerai"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Manoj <mnjkshrm@gmail.com>"]
 description = "A type-safe, blazing fast agentic AI framework in Rust"
