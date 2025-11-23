@@ -34,8 +34,7 @@ use std::time::Instant;
 async fn main() -> anyhow::Result<()> {
     // 1. Create a provider
     let provider = GroqProvider::new(
-        std::env::var("GROQ_API_KEY")?,
-        "llama-3.3-70b-versatile".to_string(),
+        std::env::var("GROQ_API_KEY")?
     );
 
     // 2. Register tools
